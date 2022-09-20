@@ -105,15 +105,89 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    //SetupScene initializes our level and calls the previous functions to lay out the game board
     public void SetupScene(int level)
     {
-        BoardSetup();
-        InitialiseList();
-        LayoutObjectAtRandom(wallTiles, wallCount.minimum, wallCount.maximum);
-        LayoutObjectAtRandom(foodTiles, foodCount.minimum, foodCount.maximum);
+        /*
+        //Creates the outer walls and floor.
+        BoardSetup ();
+
+        //Reset our list of gridpositions.
+        InitialiseList ();
+
+        //Instantiate a random number of wall tiles based on minimum and maximum, at randomized positions.
+        LayoutObjectAtRandom (wallTiles, wallCount.minimum, wallCount.maximum);
+
+        //Instantiate a random number of food tiles based on minimum and maximum, at randomized positions.
+        LayoutObjectAtRandom (foodTiles, foodCount.minimum, foodCount.maximum);
+
+        //Determine number of enemies based on current level number, based on a logarithmic progression
         int enemyCount = (int)Mathf.Log(level, 2f);
-        enemyCount += 5;
-        LayoutObjectAtRandom(enemyTiles, enemyCount, enemyCount);
-        Instantiate(exit, new Vector3(columns - 1, rows - 1, 0f), Quaternion.identity);
+
+        //Instantiate a random number of enemies based on minimum and maximum, at randomized positions.
+        LayoutObjectAtRandom (enemyTiles, enemyCount, enemyCount);
+
+        //Instantiate the exit tile in the upper right hand corner of our game board
+        Instantiate (exit, new Vector3 (columns - 1, rows - 1, 0f), Quaternion.identity);
+        */
+        TextAsset levelAsset = null;
+        switch (level)
+        {
+            case 1:
+                levelAsset = Resources.Load("day1") as TextAsset;
+                break;
+            case 2:
+                levelAsset = Resources.Load("day2") as TextAsset;
+                break;
+            case 3:
+                levelAsset = Resources.Load("day3") as TextAsset;
+                break;
+        }
+
+        if (levelAsset != null)
+        {
+            string[] lines = levelAsset.text.Split('\n');
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                for (int j = 0; j < lines[i].Length; j++)
+                {
+                    if (lines[i][j] == ' ')
+                    {
+                        GameObject floor = floorTiles[Random.Range(0, floorTiles.Length)];
+                        Instantiate(floor, new Vector3(j - 1, (lines.Length - i) - 2, 0f), Quaternion.identity);
+                    }
+                    if (lines[i][j] == 'x')
+                    {
+                        GameObject floor = floorTiles[Random.Range(0, floorTiles.Length)];
+                        Instantiate(floor, new Vector3(j - 1, (lines.Length - i) - 2, 0f), Quaternion.identity);
+
+                        GameObject wall = wallTiles[Random.Range(0, wallTiles.Length)];
+                        Instantiate(wall, new Vector3(j - 1, (lines.Length - i) - 2, 0f), Quaternion.identity);
+                    }
+                    if (lines[i][j] == 'F')
+                    {
+                        GameObject floor = floorTiles[Random.Range(0, floorTiles.Length)];
+                        Instantiate(floor, new Vector3(j - 1, (lines.Length - i) - 2, 0f), Quaternion.identity);
+
+                        GameObject food = foodTiles[Random.Range(0, foodTiles.Length)];
+                        Instantiate(food, new Vector3(j - 1, (lines.Length - i) - 2, 0f), Quaternion.identity);
+                    }
+                    if (lines[i][j] == 'E')
+                    {
+                        GameObject floor = floorTiles[Random.Range(0, floorTiles.Length)];
+                        Instantiate(floor, new Vector3(j - 1, (lines.Length - i) - 2, 0f), Quaternion.identity);
+
+                        GameObject enemy = enemyTiles[Random.Range(0, enemyTiles.Length)];
+                        Instantiate(enemy, new Vector3(j - 1, (lines.Length - i) - 2, 0f), Quaternion.identity);
+                    }
+                    if (lines[i][j] == 'T')
+                    {
+                        Instantiate(exit, new Vector3(j - 1, (lines.Length - i) - 2, 0f), Quaternion.identity);
+                    }
+                }
+            }
+        }
+
     }
 }
